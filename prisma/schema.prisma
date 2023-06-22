@@ -1,0 +1,86 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  id                        String      @id @default(uuid())
+  name                      String      @db.VarChar(30)
+  username                  String      @unique @db.VarChar(30)
+  bio                       String?     @default("") @db.VarChar(300)
+  avatar                    String?     @default("https://i.imgur.com/hepj9ZS.png") @db.VarChar(300)
+  email                     String      @unique
+  password                  String
+  phone                     String      @unique
+  gender                    String      @default("Not Specified") @db.VarChar(30)
+  createdAt                 DateTime    @default(now()) @db.Timestamp(6)
+  updatedAt                 DateTime    @updatedAt
+  isAccountActive           Boolean     @default(false)
+  passwordChangedAt         DateTime?   @db.Timestamp(6)
+  Posts                     Posts[]
+  Comments                  Comments[]
+  likes                     likes[]
+  followers                 followers[] @relation(name: "FollowerRelation")
+  leaders                   followers[] @relation(name: "LeaderRelation")
+  confirmationToken         String?
+  confirmationTokenExpires  DateTime?   @db.Timestamp(6)
+  passwordResetToken        String?
+  passwordResetTokenExpires DateTime?   @db.Timestamp(6)
+}
+
+model Posts {
+  id        String     @id @default(uuid())
+  caption   String     @db.VarChar(240)
+  image     String[]   @db.VarChar(300)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  userId    String
+  user      Users      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  comments  Comments[]
+  likes     likes[]
+}
+
+model Comments {
+  id        String   @id @default(uuid())
+  contents  String   @db.VarChar(240)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  postId    String
+  user      Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Posts    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  likes     likes[]
+}
+
+model likes {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  postId    String
+  commentId String
+  user      Users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  post      Posts    @relation(fields: [postId], references: [id], onDelete: Cascade)
+  comment   Comments @relation(fields: [commentId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, postId])
+}
+
+model followers {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  leaderId   String
+  followerId String
+  leader     Users    @relation(name: "LeaderRelation", fields: [leaderId], references: [id], onDelete: Cascade)
+  follower   Users    @relation(name: "FollowerRelation", fields: [followerId], references: [id], onDelete: Cascade)
+
+  @@unique([leaderId, followerId])
+}

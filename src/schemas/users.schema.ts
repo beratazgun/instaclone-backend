@@ -97,27 +97,5 @@ export const usersSchema = gql`
 		phone: String
 		"user's profile picture"
 		avatar: String
-		"user's posts count"
-		postsCount: Int
-		"user's followers count"
-		followersCount: Int
-		"user's following count"
-		followingCount: Int
-		"user's posts"
-		posts: [Post!]!
-	}
-
-	type Post {
-		id: ID!
-		"Post's caption"
-		caption: String
-		"Post's image"
-		image: [String]
-		"Post's user id"
-		userId: ID!
-		"Post's created date"
-		createdAt: String
-		"Post's updated date"
-		updatedAt: String
 	}
 `

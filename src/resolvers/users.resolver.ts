@@ -9,7 +9,7 @@ import { omit } from 'lodash'
 
 const prisma = new PrismaClient()
 
-const usersResolvers = {
+const usersResolver = {
 	Mutation: {
 		signupUser: async (_: any, args: any, context: any) => {
 			const { hashPassword } = new HashOperations()
@@ -161,7 +161,7 @@ const usersResolvers = {
 
 			return {
 				message: 'User created successfully.',
-				isSuccess: false,
+				isSuccess: true,
 				result: user,
 			}
 		},
@@ -176,7 +176,7 @@ const usersResolvers = {
 				},
 			})
 
-			if (user && (await comparePassword(password, user.password))) {
+			if (user && (await comparePassword(password, user?.password))) {
 				if (!user?.isAccountActive) {
 					return {
 						message: 'Account is not active. Please confirm your account.',
@@ -702,46 +702,13 @@ const usersResolvers = {
 					}
 				}
 
-				const posts = await prisma.posts.findMany({
-					where: {
-						userId: user.id,
-					},
-				})
-
-				const followers = await prisma.followers.findMany({
-					where: {
-						followerId: user.id,
-					},
-				})
-
-				const following = await prisma.followers.findMany({
-					where: {
-						leaderId: user.id,
-					},
-				})
-
 				// Set data to redis
-				await client.set(
-					userKey(username),
-					JSON.stringify({
-						...user,
-						postsCount: posts.length,
-						followersCount: followers.length,
-						followingCount: following.length,
-						posts,
-					})
-				)
+				await client.set(userKey(username), JSON.stringify(user))
 
 				return {
 					message: 'User found.',
 					isSuccess: true,
-					result: {
-						...user,
-						postsCount: posts.length,
-						followersCount: followers.length,
-						followingCount: following.length,
-						posts,
-					}, // this data comes from POSTGRESQL DB
+					result: user, // this data comes from POSTGRESQL DB
 				}
 			}
 		},
@@ -754,37 +721,15 @@ const usersResolvers = {
 				}
 			}
 
-			const posts = await prisma.posts.findMany({
-				where: {
-					userId: context.req.session.user.id,
-				},
-			})
-
-			const followers = await prisma.followers.findMany({
-				where: {
-					followerId: context.req.session.user.id,
-				},
-			})
-
-			const following = await prisma.followers.findMany({
-				where: {
-					leaderId: context.req.session.user.id,
-				},
-			})
-
 			return {
 				message: 'User found.',
 				isSuccess: true,
 				result: {
 					...context.req.session.user,
-					postsCount: posts.length,
-					followersCount: followers.length,
-					followingCount: following.length,
-					posts,
 				},
 			}
 		},
 	},
 }
 
-export { usersResolvers }
+export { usersResolver }

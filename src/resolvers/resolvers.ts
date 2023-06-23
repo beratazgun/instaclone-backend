@@ -1,4 +1,12 @@
 import { mergeResolvers } from '@graphql-tools/merge'
-import { usersResolvers } from './users.resolver'
+import { usersResolver } from './users.resolver'
+import { postsResolver } from './posts.resolver'
+import { commentsResolver } from './comments.resolver'
+import { likesResolver } from './likes.resolver'
 
-export const resolvers = mergeResolvers([usersResolvers])
+export const resolvers = mergeResolvers([
+	usersResolver,
+	postsResolver,
+	commentsResolver,
+	likesResolver,
+])

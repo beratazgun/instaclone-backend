@@ -11,7 +11,7 @@ export const postsSchema = gql`
 	}
 
 	type Query {
-		getPost(postReference: String): QueryResponse
+		getPost(postReference: String): PQueryResponse
 		getMyPosts: QueryResponseArrayResult
 	}
 
@@ -22,7 +22,7 @@ export const postsSchema = gql`
 		isSuccess: Boolean!
 	}
 
-	type QueryResponse {
+	type PQueryResponse {
 		"Response message"
 		message: String!
 		"Response status"

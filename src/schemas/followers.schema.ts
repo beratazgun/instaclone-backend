@@ -10,9 +10,9 @@ const followersSchema = gql`
 
 	type Query {
 		"get all followers data"
-		getAllFollowers(leaderId: String): QueryResponse
+		getAllFollowers(leaderId: String): FQueryResponse
 		"get all following data"
-		getAllFollowing(followingId: String): QueryResponse
+		getAllFollowing(followingId: String): FQueryResponse
 	}
 
 	type MutateResponse {
@@ -22,7 +22,7 @@ const followersSchema = gql`
 		isSuccess: Boolean!
 	}
 
-	type QueryResponse {
+	type FQueryResponse {
 		"A message to the user"
 		message: String!
 		"Whether the request was successful or not"

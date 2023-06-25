@@ -681,7 +681,6 @@ const usersResolver = {
 			const checkRedis = await client.get(userKey(username))
 
 			if (checkRedis) {
-				console.log('from redis')
 				return {
 					message: 'User found.',
 					isSuccess: true,

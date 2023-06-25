@@ -117,6 +117,68 @@ const likesResolver = {
 			}
 		},
 	},
+	Query: {
+		getPostsLikes: async (_: any, args: any, context: any) => {
+			const { postReference } = args
+
+			const postId = await prisma.posts.findUnique({
+				where: {
+					postReference,
+				},
+			})
+
+			if (!postId) {
+				return {
+					message: 'The post you are trying to get likes for does not exist',
+					isSuccess: false,
+				}
+			}
+
+			const likes = await prisma.likes.findMany({
+				where: {
+					postId: postId.id,
+				},
+			})
+
+			const likedBy: {
+				name: string
+				username: string
+				avatar: string
+			}[] = []
+
+			const users = await prisma.users.findMany({
+				where: {
+					id: {
+						in: likes.map((like) => like.userId),
+					},
+				},
+			})
+
+			users.forEach((user) => {
+				likedBy.push({
+					name: user.name,
+					username: user.username,
+					avatar: user.avatar as string,
+				})
+			})
+
+			if (!likes) {
+				return {
+					message: 'Something went wrong while getting likes for the post',
+					isSuccess: false,
+				}
+			}
+
+			return {
+				message: 'Likes retrieved successfully',
+				isSuccess: true,
+				result: {
+					likesCount: likes.length,
+					likedBy,
+				},
+			}
+		},
+	},
 }
 
 export { likesResolver }

@@ -135,7 +135,43 @@ const commentsResolver = {
 			}
 		},
 	},
-	Query: {},
+	Query: {
+		getPostsComments: async (_: any, args: any) => {
+			const { postReference } = args
+
+			const postId = await prisma.posts.findUnique({
+				where: {
+					postReference,
+				},
+			})
+
+			if (!postId) {
+				return {
+					message: 'The post you are trying to get comments for does not exist',
+					isSuccess: false,
+				}
+			}
+
+			const comments = await prisma.comments.findMany({
+				where: {
+					postId: postId.id,
+				},
+			})
+
+			if (!comments) {
+				return {
+					message: 'Something went wrong while getting comments',
+					isSuccess: false,
+				}
+			}
+
+			return {
+				message: 'Comments retrieved successfully',
+				isSuccess: true,
+				result: comments,
+			}
+		},
+	},
 }
 
 export { commentsResolver }

@@ -5,7 +5,6 @@ import crypto from 'crypto'
 import EmailService from '../utils/EmailService'
 import { userKey } from '../services/redis/keys'
 import { client } from '../services/redis/client'
-import { omit } from 'lodash'
 
 const prisma = new PrismaClient()
 

@@ -122,13 +122,15 @@ const followersResolver = {
 				},
 			})
 
-			followers.forEach((follower) => {
-				followersData.push({
-					username: follower.follower.username,
-					name: follower.follower.name,
-					avatar: follower.follower.avatar,
-				})
-			})
+			followers.forEach(
+				(follower: { follower: { username: any; name: any; avatar: any } }) => {
+					followersData.push({
+						username: follower.follower.username,
+						name: follower.follower.name,
+						avatar: follower.follower.avatar,
+					})
+				}
+			)
 
 			if (!followers) {
 				return {
@@ -161,13 +163,15 @@ const followersResolver = {
 				},
 			})
 
-			following.forEach((follower) => {
-				followingData.push({
-					username: follower.leader.username,
-					name: follower.leader.name,
-					avatar: follower.leader.avatar,
-				})
-			})
+			following.forEach(
+				(follower: { leader: { username: any; name: any; avatar: any } }) => {
+					followingData.push({
+						username: follower.leader.username,
+						name: follower.leader.name,
+						avatar: follower.leader.avatar,
+					})
+				}
+			)
 
 			if (!following) {
 				return {

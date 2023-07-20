@@ -149,16 +149,16 @@ const likesResolver = {
 			const users = await prisma.users.findMany({
 				where: {
 					id: {
-						in: likes.map((like) => like.userId),
+						in: likes.map((like: { userId: string }) => like.userId),
 					},
 				},
 			})
 
-			users.forEach((user) => {
+			users.forEach((user: { name: any; username: any; avatar: any }) => {
 				likedBy.push({
 					name: user.name,
 					username: user.username,
-					avatar: user.avatar as string,
+					avatar: user.avatar,
 				})
 			})
 
